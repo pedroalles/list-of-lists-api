@@ -5,6 +5,8 @@ export class LoadListsController {
 
   async handle(_httpRequest: any): Promise<any> {
     await this.loadLists.load()
-    return null
+    return {
+      statusCode: 200
+    }
   }
 }
