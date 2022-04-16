@@ -4,9 +4,10 @@ export class LoadListsController {
   constructor(private readonly loadLists: ILoadLists) {}
 
   async handle(_httpRequest: any): Promise<any> {
-    await this.loadLists.load()
+    const lists = await this.loadLists.load()
     return {
-      statusCode: 200
+      statusCode: 200,
+      body: lists
     }
   }
 }
