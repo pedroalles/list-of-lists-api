@@ -32,4 +32,10 @@ describe('LoadLists Controller', () => {
     await sut.handle({})
     expect(loadSpy).toHaveBeenCalled()
   })
+
+  it('should return 200 on success', async () => {
+    const { sut } = makeSut()
+    const lists = await sut.handle({})
+    expect(lists.statusCode).toBe(200)
+  })
 })
