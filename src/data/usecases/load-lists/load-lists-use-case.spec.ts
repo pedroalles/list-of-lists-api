@@ -1,11 +1,12 @@
 import { ILoadListsRepository } from '@/data/interfaces/db/load-lists-repository'
 import { IList } from '@/domain/models/list'
+import { makeFakeLists } from '@/presentation/tests/lists-mock'
 import { LoadListsUseCase } from './load-lists-use-case'
 
 const makeLoadListsRepositoryStub = (): ILoadListsRepository => {
   class LoadListsRepositoryStub implements ILoadListsRepository {
     loadAll(): Promise<IList[]> {
-      return null
+      return new Promise((resolve) => resolve(makeFakeLists()))
     }
   }
   return new LoadListsRepositoryStub()
@@ -31,5 +32,11 @@ describe('LoadLists UseCase', () => {
     const loadAllSpy = jest.spyOn(loadListsRepositoryStub, 'loadAll')
     await sut.load()
     expect(loadAllSpy).toHaveBeenCalled()
+  })
+
+  it('should return an array of lists on success', async () => {
+    const { sut } = makeSut()
+    const lists = await sut.load()
+    expect(lists).toEqual(makeFakeLists())
   })
 })
