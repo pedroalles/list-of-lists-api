@@ -1,5 +1,9 @@
 import { ILoadLists } from '@/domain/usecases/load-lists-usecase'
-import { ok, serverError } from '@/presentation/helpers/http-response'
+import {
+  noContent,
+  ok,
+  serverError
+} from '@/presentation/helpers/http-response'
 import {
   IController,
   IHttpRequest,
@@ -11,7 +15,7 @@ export class LoadListsController implements IController {
   async handle(_httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {
       const lists = await this.loadLists.load()
-      return ok(lists)
+      return lists.length ? ok(lists) : noContent()
     } catch (error) {
       return serverError(error as Error)
     }
