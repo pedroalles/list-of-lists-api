@@ -2,6 +2,7 @@ import { ILoadListsRepository } from '@/data/interfaces/db/load-lists-repository
 import { IList } from '@/domain/models/list'
 import { makeFakeLists } from '@/presentation/tests/lists-mock'
 import { LoadListsUseCase } from './load-lists-use-case'
+import MockDate from 'mockdate'
 
 const makeLoadListsRepositoryStub = (): ILoadListsRepository => {
   class LoadListsRepositoryStub implements ILoadListsRepository {
@@ -27,6 +28,14 @@ const makeSut = (): SutTypes => {
 }
 
 describe('LoadLists UseCase', () => {
+  afterAll(() => {
+    MockDate.set(new Date())
+  })
+
+  beforeAll(() => {
+    MockDate.set(new Date())
+  })
+
   it('should call LoadListsRepository loadAll method', async () => {
     const { sut, loadListsRepositoryStub } = makeSut()
     const loadAllSpy = jest.spyOn(loadListsRepositoryStub, 'loadAll')
