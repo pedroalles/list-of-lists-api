@@ -3,6 +3,7 @@ import { ILoadLists } from '@/domain/usecases/load-lists-usecase'
 import { LoadListsController } from './load-lists-controller'
 import MockDate from 'mockdate'
 import { makeFakeLists } from '@/presentation/tests/lists-mock'
+import { serverError } from '@/presentation/helpers/http-response/server-error'
 
 const makeLoadListsUseCaseStub = (): ILoadLists => {
   class LoadListsUseCaseStub implements ILoadLists {
@@ -53,5 +54,12 @@ describe('LoadLists Controller', () => {
     const { sut } = makeSut()
     const lists = await sut.handle({})
     expect(lists.body).toEqual(makeFakeLists())
+  })
+
+  it('should return 500 if LoadListsUseCase load method throws', async () => {
+    const { sut, loadListsUseCaseStub } = makeSut()
+    jest.spyOn(loadListsUseCaseStub, 'load').mockRejectedValueOnce(new Error())
+    const httpResponse = await sut.handle({})
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
