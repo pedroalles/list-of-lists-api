@@ -39,4 +39,13 @@ describe('LoadLists UseCase', () => {
     const lists = await sut.load()
     expect(lists).toEqual(makeFakeLists())
   })
+
+  it('should throw if LoadListsRepository throws', async () => {
+    const { sut, loadListsRepositoryStub } = makeSut()
+    jest
+      .spyOn(loadListsRepositoryStub, 'loadAll')
+      .mockRejectedValue(new Error())
+    const promise = sut.load()
+    expect(promise).rejects.toThrow()
+  })
 })
