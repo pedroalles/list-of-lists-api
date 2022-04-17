@@ -1,9 +1,10 @@
 import { ILoadLists } from '@/domain/usecases/load-lists-usecase'
-import { ok } from '@/presentation/helpers/http-response/ok'
-import { serverError } from '@/presentation/helpers/http-response/server-error'
-import { IController } from '@/presentation/interfaces/controller'
-import { IHttpRequest } from '@/presentation/interfaces/http-request'
-import { IHttpResponse } from '@/presentation/interfaces/http-response'
+import { ok, serverError } from '@/presentation/helpers/http-response'
+import {
+  IController,
+  IHttpRequest,
+  IHttpResponse
+} from '@/presentation/interfaces'
 
 export class LoadListsController implements IController {
   constructor(private readonly loadLists: ILoadLists) {}

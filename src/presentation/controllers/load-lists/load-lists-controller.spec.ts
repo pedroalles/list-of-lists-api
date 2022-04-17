@@ -1,10 +1,9 @@
 import { IList } from '@/domain/models/list'
 import { ILoadLists } from '@/domain/usecases/load-lists-usecase'
 import { LoadListsController } from './load-lists-controller'
-import MockDate from 'mockdate'
 import { makeFakeLists } from '@/presentation/tests/lists-mock'
-import { serverError } from '@/presentation/helpers/http-response/server-error'
-import { ok } from '@/presentation/helpers/http-response/ok'
+import { serverError, ok } from '@/presentation/helpers/http-response'
+import MockDate from 'mockdate'
 
 const makeLoadListsUseCaseStub = (): ILoadLists => {
   class LoadListsUseCaseStub implements ILoadLists {
