@@ -4,6 +4,7 @@ import { LoadListsController } from './load-lists-controller'
 import MockDate from 'mockdate'
 import { makeFakeLists } from '@/presentation/tests/lists-mock'
 import { serverError } from '@/presentation/helpers/http-response/server-error'
+import { ok } from '@/presentation/helpers/http-response/ok'
 
 const makeLoadListsUseCaseStub = (): ILoadLists => {
   class LoadListsUseCaseStub implements ILoadLists {
@@ -46,14 +47,8 @@ describe('LoadLists Controller', () => {
 
   it('should return 200 on success', async () => {
     const { sut } = makeSut()
-    const lists = await sut.handle({})
-    expect(lists.statusCode).toBe(200)
-  })
-
-  it('should return data on success', async () => {
-    const { sut } = makeSut()
-    const lists = await sut.handle({})
-    expect(lists.body).toEqual(makeFakeLists())
+    const httpResponse = await sut.handle({})
+    expect(httpResponse).toEqual(ok(makeFakeLists()))
   })
 
   it('should return 500 if LoadListsUseCase load method throws', async () => {

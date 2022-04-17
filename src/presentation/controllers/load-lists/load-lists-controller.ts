@@ -1,4 +1,5 @@
 import { ILoadLists } from '@/domain/usecases/load-lists-usecase'
+import { ok } from '@/presentation/helpers/http-response/ok'
 import { serverError } from '@/presentation/helpers/http-response/server-error'
 
 export class LoadListsController {
@@ -7,10 +8,7 @@ export class LoadListsController {
   async handle(_httpRequest: any): Promise<any> {
     try {
       const lists = await this.loadLists.load()
-      return {
-        statusCode: 200,
-        body: lists
-      }
+      return ok(lists)
     } catch (error) {
       return serverError(error as Error)
     }
