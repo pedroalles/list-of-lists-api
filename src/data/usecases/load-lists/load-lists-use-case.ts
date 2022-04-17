@@ -6,7 +6,6 @@ export class LoadListsUseCase implements ILoadLists {
   constructor(private readonly loadListsRepository: ILoadListsRepository) {}
 
   async load(): Promise<IList[]> {
-    await this.loadListsRepository.loadAll()
-    return null
+    return this.loadListsRepository.loadAll()
   }
 }
