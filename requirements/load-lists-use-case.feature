@@ -11,6 +11,13 @@ Feature: Carregar todas as listas do banco de dados
       Então o sistema deve buscar no banco de dados todas as listas
       E retornar um status code 200 contendo um array de listas
 
+    Scenario: De sucesso porém sem retorno
+
+      Dado que o banco de dados e o servidor estejam operando normalmente
+      E não exista nenhuma lista gravada no banco de dados
+      Quando a requisição ao endpoint /lists for feita
+      Então o sistema deve retornar um status code 204 sem conteúdo.
+
     Scenario: De exceção
 
       Dado que o banco de dados e/ou o servidor não estejam operando normalmente
