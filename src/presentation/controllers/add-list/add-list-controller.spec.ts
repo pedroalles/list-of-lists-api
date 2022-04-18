@@ -1,16 +1,32 @@
 import { IHttpRequest, IValidation } from '@/presentation/interfaces'
 import { AddListController } from './add-list-controller'
 
-class ValidatorStub implements IValidation {
-  validate(input: any): Error {
-    return null
+const makeValidatorStub = (): IValidation => {
+  class ValidatorStub implements IValidation {
+    validate(input: any): Error {
+      return null
+    }
+  }
+  return new ValidatorStub()
+}
+
+type SutTypes = {
+  sut: AddListController
+  validatorStub: IValidation
+}
+
+const makeSut = (): SutTypes => {
+  const validatorStub = makeValidatorStub()
+  const sut = new AddListController(validatorStub)
+  return {
+    sut,
+    validatorStub
   }
 }
 
 describe('AddList Controller', () => {
   it('should call Validation with correct values', async () => {
-    const validatorStub = new ValidatorStub()
-    const sut = new AddListController(validatorStub)
+    const { sut, validatorStub } = makeSut()
     const validateSpy = jest.spyOn(validatorStub, 'validate')
 
     const httpRequest: IHttpRequest = {
