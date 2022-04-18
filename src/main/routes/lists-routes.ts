@@ -1,7 +1,7 @@
-import { Router, Request, Response } from 'express'
+import { Router } from 'express'
+import routeAdapter from '../adapters/express-route-adapter'
+import { makeLoadListsController } from '../factories/load-lists'
 
 export default (router: Router): void => {
-  router.get('/lists', (req: Request, res: Response) => {
-    res.status(200).json({ msg: 'ok' })
-  })
+  router.get('/lists', routeAdapter(makeLoadListsController()))
 }
