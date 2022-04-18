@@ -1,3 +1,4 @@
+import { badRequest } from '@/presentation/helpers/http-response'
 import {
   IController,
   IHttpRequest,
@@ -8,7 +9,7 @@ import {
 export class AddListController implements IController {
   constructor(private readonly validator: IValidation) {}
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
-    this.validator.validate(httpRequest.body)
-    return null
+    const error = this.validator.validate(httpRequest.body)
+    if (error) return badRequest(error)
   }
 }
