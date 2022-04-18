@@ -1,3 +1,4 @@
+import { badRequest } from '@/presentation/helpers/http-response'
 import { IHttpRequest, IValidation } from '@/presentation/interfaces'
 import { AddListController } from './add-list-controller'
 
@@ -35,5 +36,15 @@ describe('AddList Controller', () => {
 
     await sut.handle(httpRequest)
     expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  it('should return 400 if Validator returns an error', async () => {
+    const { sut, validatorStub } = makeSut()
+    jest.spyOn(validatorStub, 'validate').mockReturnValueOnce(new Error())
+    const httpRequest: IHttpRequest = {
+      body: {}
+    }
+    const httpResponse = await sut.handle(httpRequest.body)
+    expect(httpResponse).toEqual(badRequest(new Error()))
   })
 })
