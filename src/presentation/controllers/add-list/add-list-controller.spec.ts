@@ -1,3 +1,4 @@
+import { AddListModel, IAddList } from '@/domain/usecases/add-list-usecase'
 import { badRequest } from '@/presentation/helpers/http-response'
 import { IHttpRequest, IValidation } from '@/presentation/interfaces'
 import { AddListController } from './add-list-controller'
@@ -20,17 +21,29 @@ const makeValidatorStub = (): IValidation => {
   return new ValidatorStub()
 }
 
+const makeAddListStub = (): IAddList => {
+  class AddListStub implements IAddList {
+    add(data: AddListModel): Promise<string> {
+      return null
+    }
+  }
+  return new AddListStub()
+}
+
 type SutTypes = {
   sut: AddListController
   validatorStub: IValidation
+  addListStub: IAddList
 }
 
 const makeSut = (): SutTypes => {
   const validatorStub = makeValidatorStub()
-  const sut = new AddListController(validatorStub)
+  const addListStub = makeAddListStub()
+  const sut = new AddListController(validatorStub, addListStub)
   return {
     sut,
-    validatorStub
+    validatorStub,
+    addListStub
   }
 }
 
@@ -49,5 +62,13 @@ describe('AddList Controller', () => {
     const httpRequest = makeFakeRequest()
     const httpResponse = await sut.handle(httpRequest.body)
     expect(httpResponse).toEqual(badRequest(new Error()))
+  })
+
+  it('should call AddListUseCase with correct values', async () => {
+    const { sut, addListStub } = makeSut()
+    const addSpy = jest.spyOn(addListStub, 'add')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+    expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
   })
 })
