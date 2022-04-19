@@ -1,5 +1,5 @@
 import { AddListModel, IAddList } from '@/domain/usecases/add-list-usecase'
-import { badRequest } from '@/presentation/helpers/http-response'
+import { badRequest, serverError } from '@/presentation/helpers/http-response'
 import { IHttpRequest, IValidation } from '@/presentation/interfaces'
 import { AddListController } from './add-list-controller'
 
@@ -70,5 +70,13 @@ describe('AddList Controller', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  it('should return 500 if AddListUseCase add method throws', async () => {
+    const { sut, addListStub } = makeSut()
+    jest.spyOn(addListStub, 'add').mockRejectedValueOnce(new Error())
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
