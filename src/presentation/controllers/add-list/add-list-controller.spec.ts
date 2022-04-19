@@ -1,5 +1,9 @@
 import { AddListModel, IAddList } from '@/domain/usecases/add-list-usecase'
-import { badRequest, serverError } from '@/presentation/helpers/http-response'
+import {
+  badRequest,
+  ok,
+  serverError
+} from '@/presentation/helpers/http-response'
 import { IHttpRequest, IValidation } from '@/presentation/interfaces'
 import { AddListController } from './add-list-controller'
 
@@ -23,8 +27,8 @@ const makeValidatorStub = (): IValidation => {
 
 const makeAddListStub = (): IAddList => {
   class AddListStub implements IAddList {
-    add(data: AddListModel): Promise<string> {
-      return null
+    async add(data: AddListModel): Promise<string> {
+      return 'any_id'
     }
   }
   return new AddListStub()
@@ -78,5 +82,12 @@ describe('AddList Controller', () => {
     const httpRequest = makeFakeRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  it('should return 200 on success', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(ok('any_id'))
   })
 })
