@@ -23,6 +23,6 @@ describe('add ListsInMemory Repository', () => {
     const fakeList = { title: 'any_title', description: 'any_description' }
     const listId = await sut.add(fakeList)
     expect(sut.lists).toHaveLength(1)
-    expect(listId).toBe('random_id')
+    expect(typeof listId).toBe('string')
   })
 })
