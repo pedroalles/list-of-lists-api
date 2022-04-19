@@ -1,5 +1,5 @@
 import { AddListModel, IAddList } from '@/domain/usecases/add-list-usecase'
-import { badRequest } from '@/presentation/helpers/http-response'
+import { badRequest, serverError } from '@/presentation/helpers/http-response'
 import {
   IController,
   IHttpRequest,
@@ -14,9 +14,13 @@ export class AddListController implements IController {
   ) {}
 
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
-    const error = this.validator.validate(httpRequest.body)
-    if (error) return badRequest(error)
-    const { title, description }: AddListModel = httpRequest.body
-    await this.addList.add({ title, description })
+    try {
+      const error = this.validator.validate(httpRequest.body)
+      if (error) return badRequest(error)
+      const { title, description }: AddListModel = httpRequest.body
+      await this.addList.add({ title, description })
+    } catch (error) {
+      return serverError(error as Error)
+    }
   }
 }
