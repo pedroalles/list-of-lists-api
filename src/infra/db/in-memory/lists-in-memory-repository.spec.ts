@@ -16,3 +16,13 @@ describe('loadAll ListsInMemory Repository', () => {
     expect(lists).toEqual([])
   })
 })
+
+describe('add ListsInMemory Repository', () => {
+  it('should add a list and return the id on success', async () => {
+    const sut = new ListsInMemoryRepository()
+    const fakeList = { title: 'any_title', description: 'any_description' }
+    const listId = await sut.add(fakeList)
+    expect(sut.lists).toHaveLength(1)
+    expect(listId).toBe('random_id')
+  })
+})
