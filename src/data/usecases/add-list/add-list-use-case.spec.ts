@@ -39,4 +39,11 @@ describe('AddList UseCase', () => {
     await sut.add(makeFakeListData())
     expect(loadAllSpy).toHaveBeenCalledWith(makeFakeListData())
   })
+
+  it('should throw if AddListRepository throws', async () => {
+    const { sut, addListRepositoryStub } = makeSut()
+    jest.spyOn(addListRepositoryStub, 'add').mockRejectedValue(new Error())
+    const promise = sut.add(makeFakeListData())
+    expect(promise).rejects.toThrow()
+  })
 })
