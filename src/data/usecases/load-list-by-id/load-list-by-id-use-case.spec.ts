@@ -39,4 +39,13 @@ describe('LoadListById UseCase', () => {
     const list = await sut.load(makeFakeList().id)
     expect(list).toEqual(makeFakeList())
   })
+
+  it('should throw if LoadListByIdRepository throws', async () => {
+    const { sut, loadListByIdRepositoryStub } = makeSut()
+    jest
+      .spyOn(loadListByIdRepositoryStub, 'loadById')
+      .mockRejectedValue(new Error())
+    const promise = sut.load('any_id')
+    expect(promise).rejects.toThrow()
+  })
 })
