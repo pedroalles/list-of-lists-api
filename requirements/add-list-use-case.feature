@@ -2,7 +2,7 @@ Feature: Adicionar uma lista ao banco de dados
 
     Como um usuário da API
     Quero que, ao fazer uma requisição do tipo POST ao endpoint /api/lists, o sistema adicione uma nova lista
-    Para que nela possam ser adicionados items posteriormente
+    Para que nela possam ser adicionados itens posteriormente
 
     Scenario: De sucesso
 
