@@ -8,7 +8,7 @@ export class LoadListByIdUseCase implements ILoadListById {
   ) {}
 
   async load(id: string): Promise<IList> {
-    await this.loadListByIdRepository.loadById(id)
-    return null
+    const list = await this.loadListByIdRepository.loadById(id)
+    return list
   }
 }
