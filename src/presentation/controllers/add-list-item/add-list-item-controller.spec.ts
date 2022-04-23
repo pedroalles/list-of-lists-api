@@ -15,16 +15,32 @@ const makeFakeRequest = (): IHttpRequest => {
   }
 }
 
-class LoadListByIdStub implements ILoadListById {
-  async load(id: string): Promise<IList> {
-    return null
+const makeLoadListByIdStub = (): ILoadListById => {
+  class LoadListByIdStub implements ILoadListById {
+    async load(id: string): Promise<IList> {
+      return null
+    }
+  }
+  return new LoadListByIdStub()
+}
+
+type SutTypes = {
+  sut: AddListItemController
+  loadListByIdStub: ILoadListById
+}
+
+const makeSut = (): SutTypes => {
+  const loadListByIdStub = makeLoadListByIdStub()
+  const sut = new AddListItemController(loadListByIdStub)
+  return {
+    sut,
+    loadListByIdStub
   }
 }
 
 describe('AddListItem Controller', () => {
   it('should call LoadListById with correct value', async () => {
-    const loadListByIdStub = new LoadListByIdStub()
-    const sut = new AddListItemController(loadListByIdStub)
+    const { sut, loadListByIdStub } = makeSut()
     const loadSpy = jest.spyOn(loadListByIdStub, 'load')
 
     const httpRequest = makeFakeRequest()
