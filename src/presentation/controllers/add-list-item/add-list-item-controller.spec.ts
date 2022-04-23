@@ -1,5 +1,7 @@
 import { IList } from '@/domain/models/list'
 import { ILoadListById } from '@/domain/usecases/load-list-by-id-usecase'
+import { InvalidParamError } from '@/presentation/errors'
+import { forbidden } from '@/presentation/helpers/http-response/forbidden'
 import { IHttpRequest } from '@/presentation/interfaces'
 import { AddListItemController } from './add-list-item-controller'
 
@@ -47,5 +49,13 @@ describe('AddListItem Controller', () => {
     await sut.handle(httpRequest)
 
     expect(loadSpy).toHaveBeenCalledWith(httpRequest.params.id)
+  })
+
+  it('should return 403 if LoadListById returns null', async () => {
+    const { sut, loadListByIdStub } = makeSut()
+    jest.spyOn(loadListByIdStub, 'load').mockResolvedValueOnce(null)
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError('ListId')))
   })
 })

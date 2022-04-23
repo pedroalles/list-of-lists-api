@@ -64,7 +64,7 @@ describe('AddList Controller', () => {
     const { sut, validatorStub } = makeSut()
     jest.spyOn(validatorStub, 'validate').mockReturnValueOnce(new Error())
     const httpRequest = makeFakeRequest()
-    const httpResponse = await sut.handle(httpRequest.body)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(badRequest(new Error()))
   })
 
