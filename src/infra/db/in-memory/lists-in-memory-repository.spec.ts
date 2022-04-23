@@ -1,4 +1,4 @@
-import { makeFakeLists } from '@/presentation/tests/lists-mock'
+import { makeFakeList, makeFakeLists } from '@/presentation/tests/lists-mock'
 import { ListsInMemoryRepository } from './lists-in-memory-repository'
 
 describe('loadAll ListsInMemory Repository', () => {
@@ -24,5 +24,15 @@ describe('add ListsInMemory Repository', () => {
     const listId = await sut.add(fakeList)
     expect(sut.lists).toHaveLength(1)
     expect(typeof listId).toBe('string')
+  })
+})
+
+describe('loadById ListsInMemory Repository', () => {
+  it('should load a list on success', async () => {
+    const sut = new ListsInMemoryRepository()
+    const fakeList = makeFakeList()
+    sut.lists.push(fakeList)
+    const list = await sut.loadById('any_id')
+    expect(list).toEqual(fakeList)
   })
 })
