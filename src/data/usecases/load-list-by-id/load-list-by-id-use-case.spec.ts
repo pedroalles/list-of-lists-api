@@ -1,11 +1,12 @@
 import { ILoadListByIdRepository } from '@/data/interfaces/db/load-list-by-id-repository'
 import { IList } from '@/domain/models/list'
+import { makeFakeList } from '@/presentation/tests/lists-mock'
 import { LoadListByIdUseCase } from './load-list-by-id-use-case'
 
 const makeLoadByIdRepositoryStub = (): ILoadListByIdRepository => {
   class LoadListByIdRepositoryStub implements ILoadListByIdRepository {
     async loadById(id: string): Promise<IList> {
-      return null
+      return new Promise((resolve) => resolve(makeFakeList()))
     }
   }
   return new LoadListByIdRepositoryStub()
@@ -31,5 +32,11 @@ describe('LoadListById UseCase', () => {
     const loadByIdSpy = jest.spyOn(loadListByIdRepositoryStub, 'loadById')
     await sut.load('any_id')
     expect(loadByIdSpy).toHaveBeenCalledWith('any_id')
+  })
+
+  it('should return a list on success', async () => {
+    const { sut } = makeSut()
+    const list = await sut.load(makeFakeList().id)
+    expect(list).toEqual(makeFakeList())
   })
 })
