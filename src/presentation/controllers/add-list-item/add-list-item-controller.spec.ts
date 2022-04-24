@@ -5,7 +5,11 @@ import {
 } from '@/domain/usecases/add-list-item-usecase'
 import { ILoadListById } from '@/domain/usecases/load-list-by-id-usecase'
 import { InvalidParamError } from '@/presentation/errors'
-import { badRequest, serverError } from '@/presentation/helpers/http-response'
+import {
+  badRequest,
+  ok,
+  serverError
+} from '@/presentation/helpers/http-response'
 import { forbidden } from '@/presentation/helpers/http-response/forbidden'
 import { IHttpRequest, IValidation } from '@/presentation/interfaces'
 import { makeFakeList } from '@/presentation/tests/lists-mock'
@@ -34,8 +38,8 @@ const makeLoadListByIdStub = (): ILoadListById => {
 
 const makeAddListItemStub = (): IAddListItem => {
   class AddListItemStub implements IAddListItem {
-    add(item: AddListItemModel): Promise<string> {
-      return null
+    async add(item: AddListItemModel): Promise<string> {
+      return new Promise((resolve) => resolve('any_id'))
     }
   }
   return new AddListItemStub()
@@ -126,5 +130,12 @@ describe('AddListItem Controller', () => {
     const httpRequest = makeFakeRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  it('should return 200 on success', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(ok('any_id'))
   })
 })
