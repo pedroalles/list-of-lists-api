@@ -5,6 +5,7 @@ import {
 } from '@/domain/usecases/add-list-item-usecase'
 import { ILoadListById } from '@/domain/usecases/load-list-by-id-usecase'
 import { InvalidParamError } from '@/presentation/errors'
+import { badRequest } from '@/presentation/helpers/http-response'
 import { forbidden } from '@/presentation/helpers/http-response/forbidden'
 import { IHttpRequest, IValidation } from '@/presentation/interfaces'
 import { makeFakeList } from '@/presentation/tests/lists-mock'
@@ -109,5 +110,13 @@ describe('AddListItem Controller', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  it('should return 400 if Validator returns an error', async () => {
+    const { sut, validatorStub } = makeSut()
+    jest.spyOn(validatorStub, 'validate').mockReturnValueOnce(new Error())
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(badRequest(new Error()))
   })
 })
