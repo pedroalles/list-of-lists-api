@@ -1,8 +1,13 @@
 import { IList } from '@/domain/models/list'
+import {
+  AddListItemModel,
+  IAddListItem
+} from '@/domain/usecases/add-list-item-usecase'
 import { ILoadListById } from '@/domain/usecases/load-list-by-id-usecase'
 import { InvalidParamError } from '@/presentation/errors'
 import { forbidden } from '@/presentation/helpers/http-response/forbidden'
 import { IHttpRequest } from '@/presentation/interfaces'
+import { makeFakeList } from '@/presentation/tests/lists-mock'
 import { AddListItemController } from './add-list-item-controller'
 
 const makeFakeRequest = (): IHttpRequest => {
@@ -20,23 +25,35 @@ const makeFakeRequest = (): IHttpRequest => {
 const makeLoadListByIdStub = (): ILoadListById => {
   class LoadListByIdStub implements ILoadListById {
     async load(id: string): Promise<IList> {
-      return null
+      return new Promise((resolve) => resolve(makeFakeList()))
     }
   }
   return new LoadListByIdStub()
 }
 
+const makeAddListItemStub = (): IAddListItem => {
+  class AddListItemStub implements IAddListItem {
+    add(item: AddListItemModel): Promise<string> {
+      return null
+    }
+  }
+  return new AddListItemStub()
+}
+
 type SutTypes = {
   sut: AddListItemController
   loadListByIdStub: ILoadListById
+  addListItemStub: IAddListItem
 }
 
 const makeSut = (): SutTypes => {
   const loadListByIdStub = makeLoadListByIdStub()
-  const sut = new AddListItemController(loadListByIdStub)
+  const addListItemStub = makeAddListItemStub()
+  const sut = new AddListItemController(loadListByIdStub, addListItemStub)
   return {
     sut,
-    loadListByIdStub
+    loadListByIdStub,
+    addListItemStub
   }
 }
 
@@ -57,5 +74,15 @@ describe('AddListItem Controller', () => {
     const httpRequest = makeFakeRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(forbidden(new InvalidParamError('ListId')))
+  })
+
+  it('should call AddListItem with correct value', async () => {
+    const { sut, addListItemStub } = makeSut()
+    const addSpy = jest.spyOn(addListItemStub, 'add')
+
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+
+    expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
   })
 })
