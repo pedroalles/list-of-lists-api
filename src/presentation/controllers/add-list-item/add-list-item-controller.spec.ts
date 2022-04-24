@@ -6,7 +6,7 @@ import {
 import { ILoadListById } from '@/domain/usecases/load-list-by-id-usecase'
 import { InvalidParamError } from '@/presentation/errors'
 import { forbidden } from '@/presentation/helpers/http-response/forbidden'
-import { IHttpRequest } from '@/presentation/interfaces'
+import { IHttpRequest, IValidation } from '@/presentation/interfaces'
 import { makeFakeList } from '@/presentation/tests/lists-mock'
 import { AddListItemController } from './add-list-item-controller'
 
@@ -40,20 +40,37 @@ const makeAddListItemStub = (): IAddListItem => {
   return new AddListItemStub()
 }
 
+const makeValidatorStub = (): IValidation => {
+  class ValidatorStub implements IValidation {
+    validate(input: any): Error {
+      return null
+    }
+  }
+  return new ValidatorStub()
+}
+
 type SutTypes = {
   sut: AddListItemController
   loadListByIdStub: ILoadListById
   addListItemStub: IAddListItem
+  validatorStub: IValidation
 }
 
 const makeSut = (): SutTypes => {
   const loadListByIdStub = makeLoadListByIdStub()
   const addListItemStub = makeAddListItemStub()
-  const sut = new AddListItemController(loadListByIdStub, addListItemStub)
+  const validatorStub = makeValidatorStub()
+
+  const sut = new AddListItemController(
+    loadListByIdStub,
+    addListItemStub,
+    validatorStub
+  )
   return {
     sut,
     loadListByIdStub,
-    addListItemStub
+    addListItemStub,
+    validatorStub
   }
 }
 
@@ -84,5 +101,13 @@ describe('AddListItem Controller', () => {
     await sut.handle(httpRequest)
 
     expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  it('should call Validation with correct values', async () => {
+    const { sut, validatorStub } = makeSut()
+    const validateSpy = jest.spyOn(validatorStub, 'validate')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
   })
 })
