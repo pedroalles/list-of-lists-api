@@ -4,6 +4,7 @@ import { InvalidParamError } from '@/presentation/errors/invalid-param-error'
 import {
   badRequest,
   forbidden,
+  ok,
   serverError
 } from '@/presentation/helpers/http-response'
 import {
@@ -26,7 +27,8 @@ export class AddListItemController implements IController {
       if (!list) return forbidden(new InvalidParamError('ListId'))
       const error = this.validator.validate(httpRequest.body)
       if (error) return badRequest(error)
-      await this.addListItem.add(httpRequest.body)
+      const itemId = await this.addListItem.add(httpRequest.body)
+      return ok(itemId)
     } catch (error) {
       return serverError(error as Error)
     }
